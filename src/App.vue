@@ -15,7 +15,7 @@ import { map, catchError, of } from 'rxjs'
 export default defineComponent({
     setup() {
         let frameworks: Ref<any[]> = ref([])
-        const obs$ = ajax('https://api.github.com/users?per_page=5').pipe(
+        const obs$ = ajax('https://api.github.com/users?per_page=10').pipe(
             map(userResponse => {
                 console.log('users: ', userResponse)
                 const { response } = userResponse
