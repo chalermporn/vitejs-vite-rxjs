@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "rxjs": "^7.5.6",
+    "unocss": "^0.45.21",
     "vue": "^3.2.39"
   },
   "devDependencies": {
