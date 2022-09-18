@@ -1,31 +1,44 @@
-<script setup lang="ts">
-// This starter template is using Vue 3 <script setup> SFCs
-// Check out https://vuejs.org/api/sfc-script-setup.html#script-setup
-import HelloWorld from './components/HelloWorld.vue'
-</script>
-
 <template>
   <div>
-    <a href="https://vitejs.dev" target="_blank">
-      <img src="/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://vuejs.org/" target="_blank">
-      <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-    </a>
+    Test Rxjs Ajax
+    <ul>
+      <li v-for="item in frameworks" :key="item">{{ item.login }}</li>
+    </ul>
   </div>
-  <HelloWorld msg="Vite + Vue" />
 </template>
 
-<style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
-}
-</style>
+<script lang="ts">
+import { defineComponent, onMounted, ref, type Ref } from "vue"
+import { ajax } from 'rxjs/ajax'
+import { map, catchError, of } from 'rxjs'
+
+export default defineComponent({
+    setup() {
+        let frameworks: Ref<any[]> = ref([])
+        const obs$ = ajax('https://api.github.com/users?per_page=5').pipe(
+            map(userResponse => {
+                console.log('users: ', userResponse)
+                const { response } = userResponse
+                return response
+            }),
+            catchError(error => {
+                console.log('error: ', error)
+                return of(error)
+            })
+        )
+
+        onMounted(() => {
+            obs$.subscribe({
+                next: value => {
+                    console.log(value)
+                    frameworks.value = value
+                },
+                error: err => console.log(err)
+            })
+        })
+        return {
+            frameworks,
+        }
+    },
+})
+</script>
